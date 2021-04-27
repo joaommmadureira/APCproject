@@ -30,19 +30,24 @@ typedef struct
 void mostrar_menu();
 void cadastrar_pessoa();
 int validar_sexo(char sexo);
-int validar_data(Cadastro pessoa);
+int validar_data(Data pessoa);
 int validar_cidade(char cidade[]);
 int validar_estado(char estado[]);
 void gravar_registro(Cadastro pessoa);
-void cadastrar_estado();
-void cadastrar_cidade();
-void listar_pessoas_estado();
-void listar_pessoas_cidade();
-void listar_pessoas_nome();
+void cadastrar_estado(char estado[]);
+void cadastrar_cidade(char cidade[]);
+void listar_pessoas_estado(char estado[]);
+void listar_pessoas_cidade(char cidade[]);
+void listar_pessoas_nome(char nome[]);
+void deletar_pessoas(char nome[]);
+void gerar_relatorio_demografico();
 
 
 int main() {
     int opcao_menu;
+    char estado[TAM_MAX];
+    char cidade[TAM_MAX];
+    char nome[TAM_MAX];
 
     printf("\nREGISTRO DEMOGRAFICO DE VACINACAO\n");
 
@@ -57,67 +62,98 @@ int main() {
         switch ( opcao_menu ) {
             case 1:
             // Cadastrando um estado.
-            cadastrar_estado();
+                printf("\nCADASTRAR ESTADO");
+                printf("\n\tDigite o nome do estado que deseja cadastrar: ");
+            // Lendo o estado a ser cadastrado.
+                scanf(" %[^\n]s", estado);
+                cadastrar_estado(estado);
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 2:
             // Cadastrando uma cidade.
-            cadastrar_cidade();
+                printf("\nCADASTRAR CIDADE");
+                printf("\n\tDigite o nome da cidade que deseja cadastrar: ");
+            // Lendo cidade a ser cadastrada.
+                scanf(" %[^\n]s", cidade);
+                cadastrar_cidade(cidade);
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 3:
             // Cadastrando uma pessoa.
-            cadastrar_pessoa();
+                printf("\nCADASTRAR PESSOA");
+                cadastrar_pessoa();
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 4:
             // Listando pessoas por estado.
-            listar_pessoas_estado();
+                printf("\nLISTAR PESSOAS POR ESTADO");
+                printf("\n\tDigite o estado a ser pesquisado: ");
+                scanf(" %[^\n]s", estado);
+                listar_pessoas_estado(estado);
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("\nPressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 5:
             // Listando pessoas por cidade.
-            listar_pessoas_cidade();
+                printf("\nLISTAR PESSOAS POR CIDADE");
+                printf("\n\tDigite a cidade a ser pesquisada: ");
+                scanf(" %[^\n]s", cidade);
+                listar_pessoas_cidade(cidade);
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 6:
             // Listando pessoas por nome.
-            listar_pessoas_nome();
+                printf("\nCONSULTAR PESSOA POR NOME");
+                printf("\n\tDigite o nome a ser consultado: ");
+                scanf(" %[^\n]s", nome);
+                listar_pessoas_nome(nome);
 
-            printf("Pressione uma tecla para continuar...\n");
-            getch();
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 7:
-            //
+            // Deletando um registro.
+                printf("\nDELETAR CADASTRO");
+                printf("\n\tDigite o nome do usuário que deseja excluir: ");
+            // Lendo o nome do usuário a ser deletado.
+                scanf(" %[^\n]s", nome);
 
+                deletar_pessoas(nome);
+            
+                printf("Pressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 8:
-            //
+            // Gerando relatoria demografico
+                printf("\nGERAR RELATORIO DE VACINACAO\n");
+                gerar_relatorio_demografico();
 
+                printf("\nPressione uma tecla para continuar...\n");
+                getch();
             break;
 
             case 9: 
+                printf("\nPrograma fechado.\n\n");
             break;
 
             default:
-            printf("\nValor invalido, por favor escolha uma das opcoes abaixo.\n");
+                printf("\nValor invalido, por favor escolha uma das opcoes abaixo.\n");
             break;
 
 
@@ -141,15 +177,10 @@ void mostrar_menu() {
 };
 
 // Cadastrar um novo estado
-void cadastrar_estado() {
-    char estado[TAM_MAX];
+void cadastrar_estado(char estado[]) {
     char estado_existente[TAM_MAX];
     int verificador = 0;
     int i;
-
-    printf("\nCADASTRAR ESTADO");
-    printf("\n\tDigite o nome do estado que deseja cadastrar: ");
-    scanf(" %[^\n]s", estado);
 
     FILE *arquivo;
     arquivo = fopen(arq_estados, "r+t");
@@ -176,16 +207,10 @@ void cadastrar_estado() {
 }
 
 // Cadastrar uma nova cidade
-void cadastrar_cidade() {
-    char cidade[TAM_MAX];
+void cadastrar_cidade(char cidade[]) {
     char cidade_existente[TAM_MAX];
     int verificador = 0;
     int i;
-
-    printf("\nCADASTRAR CIDADE");
-    printf("\n\tDigite o nome da cidade que deseja cadastrar: ");
-    // Lendo cidade a ser cadastrada.
-    scanf(" %[^\n]s", cidade);
 
     // Abrindo arquivo.
     FILE *arquivo;
@@ -216,14 +241,15 @@ void cadastrar_cidade() {
 void cadastrar_pessoa() {
     Cadastro pessoa;
     
-    printf("\nCADASTRAR PESSOA");
     printf("\nPreencha as informacoes solicitadas.\n");
 
+    // Pedindo informacoes da pessoa a ser registrada.
     printf("\tNome completo: ");
     scanf(" %[^\n]s", pessoa.nome);
 
     printf("\tSexo(M para Masculino ou F para feminino): ");
     scanf(" %c", &pessoa.sexo);
+    // Verificando se o sexo inserido e valido.
     if (validar_sexo(pessoa.sexo) == 0)
     {
         printf ("\nInsira um sexo valido. Por favor, tente novamente.\n");
@@ -232,7 +258,8 @@ void cadastrar_pessoa() {
 
     printf("\tData de nascimento (no seguinte formato ""dd/mm/aaaa""): ");
     scanf("%d/%d/%d", &pessoa.data.dia, &pessoa.data.mes, &pessoa.data.ano);
-    if (validar_data(pessoa) == 0)
+    // Verificando se a data inserida e valida.
+    if (validar_data(pessoa.data) == 0)
     {
         printf ("\nInsira uma data valida! Por favor, tente novamente.\n");
         return;
@@ -240,7 +267,7 @@ void cadastrar_pessoa() {
 
     printf("\tCidade: ");
     scanf(" %[^\n]s", pessoa.cidade);
-    // Fazendo a validacao da cidade
+    // Fazendo a validacao da cidade.
     if (validar_cidade(pessoa.cidade) == 0)
     {
         printf ("\nE necessario cadastrar a cidade antes de registrar pessoas nela! Por favor, tente novamente.\n");
@@ -249,13 +276,14 @@ void cadastrar_pessoa() {
 
     printf("\tUnidade Federativa: ");
     scanf(" %[^\n]s", pessoa.estado);
-    // Fazendo a validacao da cidade
+    // Fazendo a validacao do estado.
     if (validar_estado(pessoa.estado) == 0)
     {
         printf ("\nE necessario cadastrar o estado antes de registrar pessoas nele! Por favor, tente novamente.\n");
         return;
     }
 
+    // Chamando funcao que registra os dados no arquivo.
     gravar_registro(pessoa);
 };
 
@@ -266,30 +294,30 @@ int validar_sexo(char sexo) {
 }
 
 // Funcao para validar a data escrita, retorna 0 quando invalida.
-int validar_data(Cadastro pessoa) {
+int validar_data(Data data) {
     // Verficacoes gerais.
-    if(pessoa.data.mes < 1 || pessoa.data.mes > 12 || pessoa.data.dia < 1) return 0;
+    if(data.mes < 1 || data.mes > 12 || data.dia < 1) return 0;
     // Verificando o mes de fevereiro, incluindo os anos bissextos.
-    if(pessoa.data.mes == 2) 
+    if(data.mes == 2) 
     {
-        if(pessoa.data.ano%4 == 0)
+        if(data.ano%4 == 0)
         {
-            if(pessoa.data.dia > 29) return 0;
+            if(data.dia > 29) return 0;
         }
-        else if(pessoa.data.dia > 28) return 0;  
+        else if(data.dia > 28) return 0;  
     }
     // Verificando os meses com 30 dias.
-    else if(pessoa.data.mes == 4 || pessoa.data.mes == 6 || pessoa.data.mes == 9 || pessoa.data.mes == 11) 
+    else if(data.mes == 4 || data.mes == 6 || data.mes == 9 || data.mes == 11) 
     {
-        if(pessoa.data.dia > 30) return 0;
+        if(data.dia > 30) return 0;
     }
     // Verificando os meses com 31 dias.
-    else if(pessoa.data.dia > 31) return 0;
+    else if(data.dia > 31) return 0;
 
     return;
 }
 
-// Funcao que verifica se a cidade passada existe no arquivos de cidades. Retorna 1 se encontrar e 0 se nao.
+// Funcao que verifica se a cidade passada existe no arquivo de cidades. Retorna 1 se encontrar e 0 se nao.
 int validar_cidade(char cidade[]) {
     char cidade_existe[TAM_MAX];
 
@@ -310,7 +338,7 @@ int validar_cidade(char cidade[]) {
     return 0;
 }
 
-// Funcao que verifica se o estado passado existe no arquivos de estados. Retorna 1 se encontrar e 0 se nao.
+// Funcao que verifica se o estado passado existe no arquivo de estados. Retorna 1 se encontrar e 0 se nao.
 int validar_estado(char estado[]) {
     char estado_existe[TAM_MAX];
 
@@ -347,19 +375,14 @@ void gravar_registro(Cadastro pessoa) {
     else 
     {
         fclose(arquivo);
-        printf("Erro ao armazenar os dados. Por favor, tente novamente.");
+        printf("\nErro ao armazenar os dados. Por favor, tente novamente.\n");
     } 
 }
 
 // Procedimento para listar pessoas por estado.
-void listar_pessoas_estado() {
-    char estado[TAM_MAX];
+void listar_pessoas_estado(char estado[]) {
     Cadastro pessoa;
     int i = 1;
-
-    printf("\nLISTAR PESSOAS POR ESTADO");
-    printf("\n\tDigite o estado a ser pesquisado: ");
-    scanf(" %[^\n]s", estado);
 
     if (validar_estado(estado) == 0)
     {
@@ -383,14 +406,9 @@ void listar_pessoas_estado() {
 }
 
 // Procedimento para listar pessoas por estado.
-void listar_pessoas_cidade() {
-    char cidade[TAM_MAX];
+void listar_pessoas_cidade(char cidade[]) {
     Cadastro pessoa;
     int i = 0;
-
-    printf("\nLISTAR PESSOAS POR CIDADE");
-    printf("\n\tDigite a cidade a ser pesquisada: ");
-    scanf(" %[^\n]s", cidade);
 
     if (validar_cidade(cidade) == 0)
     {
@@ -414,14 +432,9 @@ void listar_pessoas_cidade() {
 }
 
 // Procedimento para a listagem por nome.
-void listar_pessoas_nome() {
-    char nome[TAM_MAX];
+void listar_pessoas_nome(char nome[]) {
     Cadastro pessoa;
     int i = 0;
-
-    printf("\nCONSULTAR PESSOA POR NOME");
-    printf("\n\tDigite o nome a ser consultado: ");
-    scanf(" %[^\n]s", nome);
 
     FILE *arquivo;
     arquivo = fopen(arq_cadastros, "rb");
@@ -439,4 +452,52 @@ void listar_pessoas_nome() {
     fclose(arquivo);
 }
 
-// 
+void deletar_pessoas(char nome[]) {
+    FILE *arquivo;
+    FILE *arquivo_temporario;
+    Cadastro pessoa;
+     
+    arquivo= fopen(arq_cadastros, "rb");
+    arquivo_temporario= fopen("arquivos/temp.bin", "wb");
+
+    while(fread(&pessoa, sizeof(Cadastro), 1, arquivo)) {
+        if (strcmp(strlwr(nome), strlwr(pessoa.nome)) == 0) 
+        {
+            printf("\nUsuario - %s - deletado com sucesso!\n", nome);
+        } 
+        else
+        {
+            fwrite(&pessoa, sizeof(Cadastro), 1, arquivo_temporario);
+        }
+    }
+
+    fclose(arquivo);
+    fclose(arquivo_temporario);
+
+    remove(arq_cadastros);
+    rename("arquivos/temp.bin", "arquivos/cadastros.bin");
+}
+
+void gerar_relatorio_demografico() {
+    FILE *arquivo;
+    Cadastro pessoa;
+    int total_pessoas = 0;
+    float masculino = 0;
+    float feminino = 0;
+
+    arquivo = fopen(arq_cadastros, "rb");
+
+    while(fread(&pessoa, sizeof(Cadastro), 1, arquivo)) {
+        total_pessoas++;
+
+        if (pessoa.sexo == 'M')
+            masculino++;
+        else
+            feminino++;
+    }
+
+    printf("\nPercentual de pessoa por sexo:\n");
+    printf("\n\tMasculino: %.2f %%", (masculino/total_pessoas) * 100);
+    printf("\n\tFeminino: %.2f %%\n", (feminino/total_pessoas) * 100);
+
+}
