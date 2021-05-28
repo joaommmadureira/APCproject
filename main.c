@@ -1019,7 +1019,6 @@ void deletar_pessoas(char nome[]) {
 }
 
 void gerar_relatorio_demografico() {
-    FILE *arquivo;
     Cadastro pessoa;
     int idade;
     int total_pessoas = 0;
@@ -1033,7 +1032,7 @@ void gerar_relatorio_demografico() {
     float faixa_etaria_4; // 50 a 60
     float faixa_etaria_5; // acima de 60
 
-    arquivo = abrir_arquivos(arq_cadastros, "rb");
+    FILE *arquivo = abrir_arquivos(arq_cadastros, "rb");
 
     while(fread(&pessoa, sizeof(Cadastro), 1, arquivo)) {
         total_pessoas++;
@@ -1062,6 +1061,8 @@ void gerar_relatorio_demografico() {
     printf("\nPercentual de pessoa por sexo:\n");
     printf("\n\tMasculino:\t%.2f %%", (masculino/total_pessoas) * 100);
     printf("\n\tFeminino:\t%.2f %%\n", (feminino/total_pessoas) * 100);
+
+    fclose(arquivo);
 }
 
 FILE * abrir_arquivos(char arquivo[], char modo[]) {
